@@ -17,6 +17,8 @@ public class ListedMod : Control
 			GetNode<CheckBox>("Enabled").Disabled = true;
 			GetNode<CheckBox>("Enabled").Pressed = true;
 		}
+		else
+			GetNode<CheckBox>("Enabled").Disabled = false;
 	}
 	public void Up() { this.GetParent().MoveChild(this, Math.Max(0, this.GetIndex() - 1)); }
 	public void Down() { this.GetParent().MoveChild(this, Math.Min(this.GetParent().GetChildCount(), this.GetIndex() + 1)); }

@@ -169,7 +169,6 @@ custom_colors/font_color_hover_pressed = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
-disabled = true
 pressed = true
 text = "Sound Space Plus"
 
