@@ -134,6 +134,8 @@ public class PlusPlus : Control
 
 		foreach (ListedMod mod in modlist.GetChildren())
 		{
+			if (!mod.GetNode<CheckBox>("Enabled").Pressed)
+				continue;
 			if (mod.IsGame || mod.Path == "SS+")
 				ProjectSettings.LoadResourcePack(path.PlusFile("SoundSpacePlus.pck"), false);
 			else
