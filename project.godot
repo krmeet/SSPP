@@ -65,8 +65,8 @@ settings/change_time_per_screen=true
 
 [display]
 
-window/size/width=1600
-window/size/height=900
+window/size/width=480
+window/size/height=720
 window/vsync/use_vsync=false
 window/handheld/orientation="sensor_landscape"
 

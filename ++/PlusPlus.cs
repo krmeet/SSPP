@@ -1,8 +1,7 @@
 using Godot;
-using Godot.Collections;
 using System;
 
-public class PlusPlus : Node
+public class PlusPlus : Control
 {
 	private bool loaded = false;
 	private Control options;
@@ -10,22 +9,55 @@ public class PlusPlus : Node
 	public override void _Ready()
 	{
 		options = GetNode<Control>("Panel/VBoxContainer");
-		modlist = options.GetNode<Control>("ModList/Content");
+		modlist = options.GetNode<Control>("List/Content");
 
 		options.GetNode<LineEdit>("Path/PathText").Connect("text_changed", this, nameof(CheckPathText));
 		options.GetNode<Button>("Path/PathSelect").Connect("pressed", options.GetNode<FileDialog>("Path/Dialog"), "popup", new Godot.Collections.Array(new Rect2(0, 0, 480, 360)));
-		options.GetNode<FileDialog>("Path/Dialog").Connect("dir_selected", this, nameof(NewPath));
+		options.GetNode<FileDialog>("Path/Dialog").Connect("dir_selected", this, nameof(CheckPathText), new Godot.Collections.Array(true));
 
 		options.GetNode<Button>("Load").Connect("pressed", this, nameof(LoadGame));
 
+		LoadModList();
 		CallDeferred(nameof(LoadPrevious));
+	}
+	public void LoadModList()
+	{
+		var modsDir = OS.GetExecutablePath().GetBaseDir().PlusFile("mods");
+		if (!System.IO.Directory.Exists(modsDir))
+			System.IO.Directory.CreateDirectory(modsDir);
+		foreach (string file in System.IO.Directory.GetFiles(modsDir))
+		{
+			if (file.Extension() != "pck")
+				continue;
+			GD.Print(file);
+			var mod = (ListedMod)modlist.GetNode<ListedMod>("SoundSpacePlus").Duplicate();
+			mod.Name = file.GetFile().BaseName();
+			mod.Path = file;
+			mod.IsGame = false;
+			modlist.AddChild(mod);
+		}
 	}
 	public void LoadPrevious()
 	{
 		var file = new File();
 		if (!file.FileExists(OS.GetExecutablePath().GetBaseDir().PlusFile("settings"))) return;
 		file.Open(OS.GetExecutablePath().GetBaseDir().PlusFile("settings"), File.ModeFlags.Read);
-		NewPath(file.GetLine());
+		CheckPathText(file.GetLine(), true);
+		var order = file.GetLine();
+		int index = 0;
+		foreach (var deets in order.Split(";", false))
+		{
+			var split = deets.Split(":", false);
+			var name = split[0];
+			var enabled = split.Length > 1 && split[1] == "1";
+			var mod = modlist.GetNode<ListedMod>(name);
+			if (mod != null)
+			{
+				mod.GetNode<CheckBox>("Enabled").Pressed = mod.IsGame || enabled;
+				modlist.MoveChild(mod, index);
+				index++;
+			}
+		}
 		file.Close();
 	}
 	public void SavePrevious()
@@ -33,6 +65,12 @@ public class PlusPlus : Node
 		var file = new File();
 		file.Open(OS.GetExecutablePath().GetBaseDir().PlusFile("settings"), File.ModeFlags.Write);
 		file.StoreLine(options.GetNode<LineEdit>("Path/PathText").Text);
+		var order = "";
+		foreach (ListedMod mod in modlist.GetChildren())
+		{
+			order += $"{mod.Name}:{(mod.GetNode<CheckBox>("Enabled").Pressed ? "1" : "0")};";
+		}
+		file.StoreLine(order);
 		file.Close();
 	}
 	public void Disable()
@@ -44,13 +82,9 @@ public class PlusPlus : Node
 		options.GetNode<Button>("NativeDialog").Disabled = true;
 		options.GetNode<Button>("Discord").Disabled = true;
 	}
-	public void NewPath(string path)
+	public void CheckPathText(string path, bool recurse = false)
 	{
-		options.GetNode<LineEdit>("Path/PathText").Text = path;
-		CheckPathText(path);
-	}
-	public void CheckPathText(string path)
-	{
+		if (recurse) options.GetNode<LineEdit>("Path/PathText").Text = path;
 		var badPath = !CheckPath(path);
 		options.GetNode<Label>("Valid").Visible = badPath;
 		options.GetNode<Button>("Load").Disabled = badPath;
@@ -97,7 +131,14 @@ public class PlusPlus : Node
 
 		var version = ProjectSettings.GetSetting("application/config/version");
 		ProjectSettings.SetSetting("application/config/version", $"{version} (Modded)");
-		var res = ProjectSettings.LoadResourcePack(path.PlusFile("SoundSpacePlus.pck"), true);
+
+		foreach (ListedMod mod in modlist.GetChildren())
+		{
+			if (mod.IsGame || mod.Path == "SS+")
+				ProjectSettings.LoadResourcePack(path.PlusFile("SoundSpacePlus.pck"), false);
+			else
+				ProjectSettings.LoadResourcePack(mod.Path);
+		}
 
 		AudioServer.SetBusLayout(GD.Load<AudioBusLayout>("res://default_bus_layout.tres"));
 
@@ -111,6 +152,8 @@ public class PlusPlus : Node
 
 		if (skip) SSPInit();
 		else GetTree().ChangeScene("res://init.tscn");
+		OS.WindowSize = new Vector2(1280, 720);
+		OS.CenterWindow();
 	}
 	public void InitScripts(bool noGlobal = false)
 	{
