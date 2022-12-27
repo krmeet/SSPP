@@ -50,7 +50,7 @@ public class PlusPlus : Control
 			var split = deets.Split(":", false);
 			var name = split[0];
 			var enabled = split.Length > 1 && split[1] == "1";
-			var mod = modlist.GetNode<ListedMod>(name);
+			var mod = modlist.GetNodeOrNull<ListedMod>(name);
 			if (mod != null)
 			{
 				mod.GetNode<CheckBox>("Enabled").Pressed = mod.IsGame || enabled;
