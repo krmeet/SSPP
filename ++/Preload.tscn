@@ -1,0 +1,185 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://++/font.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://++/theme.tres" type="Theme" id=2]
+[ext_resource path="res://++/PlusPlus.cs" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.141176, 0.141176, 0.141176, 1 )
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="DynamicFont" id=1]
+size = 32
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color( 0.188235, 0.188235, 0.188235, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="DynamicFont" id=4]
+size = 24
+font_data = ExtResource( 1 )
+
+[node name="Preload" type="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 2 )
+color = Color( 0.0941176, 0.0941176, 0.0941176, 1 )
+script = ExtResource( 3 )
+
+[node name="Panel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -192.0
+margin_top = -224.0
+margin_right = 192.0
+margin_bottom = 288.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="Title" type="Label" parent="Panel"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -128.0
+margin_top = -48.0
+margin_right = 128.0
+custom_fonts/font = SubResource( 1 )
+text = "Sound Space++"
+align = 1
+valign = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_top = 24.0
+margin_right = -32.0
+margin_bottom = -24.0
+alignment = 1
+
+[node name="PathLabel" type="Label" parent="Panel/VBoxContainer"]
+margin_top = 30.0
+margin_right = 320.0
+margin_bottom = 49.0
+text = "Sound Space Plus Path"
+
+[node name="Path" type="HBoxContainer" parent="Panel/VBoxContainer"]
+margin_top = 53.0
+margin_right = 320.0
+margin_bottom = 76.0
+
+[node name="PathText" type="LineEdit" parent="Panel/VBoxContainer/Path"]
+margin_right = 217.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+
+[node name="PathSelect" type="Button" parent="Panel/VBoxContainer/Path"]
+margin_left = 221.0
+margin_right = 320.0
+margin_bottom = 23.0
+text = "Choose Path"
+
+[node name="Dialog" type="FileDialog" parent="Panel/VBoxContainer/Path"]
+margin_left = 175.0
+margin_right = 574.0
+margin_bottom = 140.0
+popup_exclusive = true
+window_title = "Open a Directory"
+resizable = true
+dialog_text = "Select the folder Sound Space Plus is installed in.
+This is NOT your user folder."
+dialog_autowrap = true
+mode_overrides_title = false
+mode = 2
+access = 2
+show_hidden_files = true
+
+[node name="Valid" type="Label" parent="Panel/VBoxContainer"]
+margin_top = 80.0
+margin_right = 320.0
+margin_bottom = 99.0
+custom_colors/font_color = Color( 1, 0.313726, 0.313726, 1 )
+text = "This is not a valid path."
+
+[node name="Sep1" type="HSeparator" parent="Panel/VBoxContainer"]
+margin_top = 103.0
+margin_right = 320.0
+margin_bottom = 135.0
+custom_constants/separation = 32
+
+[node name="ModList" type="ScrollContainer" parent="Panel/VBoxContainer"]
+margin_top = 139.0
+margin_right = 320.0
+margin_bottom = 267.0
+rect_min_size = Vector2( 0, 128 )
+custom_styles/bg = SubResource( 3 )
+follow_focus = true
+scroll_horizontal_enabled = false
+
+[node name="Content" type="VBoxContainer" parent="Panel/VBoxContainer/ModList"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 8.0
+margin_bottom = 8.0
+
+[node name="SSPPMods" type="Label" parent="Panel/VBoxContainer"]
+margin_top = 271.0
+margin_right = 320.0
+margin_bottom = 290.0
+text = "Total mods: 0/0"
+
+[node name="Sep2" type="HSeparator" parent="Panel/VBoxContainer"]
+margin_top = 294.0
+margin_right = 320.0
+margin_bottom = 326.0
+custom_constants/separation = 32
+
+[node name="Load" type="Button" parent="Panel/VBoxContainer"]
+margin_top = 330.0
+margin_right = 320.0
+margin_bottom = 353.0
+text = "Load"
+
+[node name="SkipLoading" type="CheckBox" parent="Panel/VBoxContainer"]
+margin_top = 357.0
+margin_right = 320.0
+margin_bottom = 380.0
+text = "Skip loading screen"
+flat = true
+
+[node name="NativeDialog" type="CheckBox" parent="Panel/VBoxContainer"]
+margin_top = 384.0
+margin_right = 320.0
+margin_bottom = 407.0
+text = "Disable Native Dialogs"
+flat = true
+
+[node name="Discord" type="CheckBox" parent="Panel/VBoxContainer"]
+margin_top = 411.0
+margin_right = 320.0
+margin_bottom = 434.0
+text = "Disable Discord Rich Presence"
+flat = true
+
+[node name="State" type="Label" parent="Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -192.0
+margin_top = 8.0
+margin_right = 192.0
+margin_bottom = 104.0
+custom_fonts/font = SubResource( 4 )
+align = 1
